@@ -1,0 +1,69 @@
+<app-navbar></app-navbar>
+
+<div class="container main-container">
+
+  <div class="row">
+
+    <div class="col-md-4">
+      <div *ngIf="!makerSel" class="alert alert-info animated fadeIn">
+        <strong>Haga click en el mapa para crear un marcador o seleccione uno.</strong>
+      </div>
+      <div *ngIf="makerSel" class="animated fadeIn fast">
+
+        <h5>Marcador</h5>
+        <hr>
+        <div class="form-group">
+          <label for="titulo">title</label>
+          <input [(ngModel)]="makerSel.title" name="titulo" placeholder="titulo" type="text" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="description">description</label>
+          <textarea [(ngModel)]="makerSel.desc" name="description" placeholder="body" rows="5" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Draggable</label>
+          <select [(ngModel)]="draggable" name="dragabble" (change)="changeDraggable()">
+            <option value="1">True</option>
+            <option value="0">False</option>
+          </select>
+        </div>
+
+        <button (click)="_ms.saveMarkers()" class="btn btn-outline-primary btn-block">Guardar cambios</button>
+      </div>
+    </div>
+
+    <div class="col-md-8" *ngIf="_ms.marcadores" >
+      <agm-map
+               [latitude]="lat"
+               [longitude]="lng"
+               [zoom]="zoom"
+               (mapClick)="clickMapa( $event ) ">
+
+        <agm-marker *ngFor="let mar of _ms.marcadores; let i = index"
+                    [latitude]="mar.lat"
+                    [longitude]="mar.lng"
+                    [markerDraggable]="mar.draggable"
+                    title="mar.title"
+                    (markerClick)="clicMaker( mar, i)"
+                    (dragEnd)="dragEndMaker( mar, $event) "
+                    (mapDraggable)="mar.draggable"
+        >
+          <agm-info-window>
+            <ng-content></ng-content>
+            <strong>{{ mar.title }}</strong>
+            <p>{{ mar.desc }}</p>
+            <p (click)="deleteMaker(i)">
+              Borrar marcador
+            </p>
+          </agm-info-window>
+
+        </agm-marker>
+
+
+      </agm-map>
+
+    </div>
+  </div>
+
+</div>
